@@ -12,7 +12,8 @@ class ProductItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (ctx) => ProductDetailScreen(name))),
+      // onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (ctx) => ProductDetailScreen(name))),
+      onTap: () => Navigator.of(context).pushNamed(ProductDetailScreen.routeName, arguments: id),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(10),
         child: GridTile(
