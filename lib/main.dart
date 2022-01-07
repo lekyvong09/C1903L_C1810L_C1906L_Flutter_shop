@@ -9,7 +9,11 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'My Shop',
-      theme: ThemeData(primarySwatch: Colors.deepPurple,),
+      theme: ThemeData(
+        primarySwatch: Colors.deepPurple,
+        accentColor: Colors.deepOrangeAccent,
+        fontFamily: 'Lato',
+      ),
       home: ProductsOverviewScreen(),
     );
   }
