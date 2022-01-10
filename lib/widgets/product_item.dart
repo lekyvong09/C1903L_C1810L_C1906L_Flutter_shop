@@ -15,7 +15,7 @@ class ProductItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    Product product = Provider.of<Product>(context);
+    Product product = Provider.of<Product>(context, listen: false);
 
     return GestureDetector(
       // onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (ctx) => ProductDetailScreen(name))),
@@ -27,7 +27,8 @@ class ProductItem extends StatelessWidget {
           footer: GridTileBar(
             title: Text(product.name, textAlign: TextAlign.center,),
             backgroundColor: Colors.black54,
-            leading: IconButton(icon: Icon(product.isFavorite ? Icons.favorite : Icons.favorite_border), color: Theme.of(context).accentColor, onPressed: () => product.toggleFavoriteStatus(),),
+            leading: Consumer<Product>(builder: (ctx, product, child) =>
+                IconButton(icon: Icon(product.isFavorite ? Icons.favorite : Icons.favorite_border), color: Theme.of(context).accentColor, onPressed: () => product.toggleFavoriteStatus(),),),
             trailing: IconButton(icon: Icon(Icons.shopping_cart), color: Theme.of(context).accentColor, onPressed: () { },),
           ),
         ),
