@@ -27,7 +27,7 @@ class ProductItem extends StatelessWidget {
           footer: GridTileBar(
             title: Text(product.name, textAlign: TextAlign.center,),
             backgroundColor: Colors.black54,
-            leading: IconButton(icon: Icon(Icons.favorite), color: Theme.of(context).accentColor, onPressed: () { },),
+            leading: IconButton(icon: Icon(product.isFavorite ? Icons.favorite : Icons.favorite_border), color: Theme.of(context).accentColor, onPressed: () => product.toggleFavoriteStatus(),),
             trailing: IconButton(icon: Icon(Icons.shopping_cart), color: Theme.of(context).accentColor, onPressed: () { },),
           ),
         ),
