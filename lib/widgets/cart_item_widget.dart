@@ -5,20 +5,20 @@ import '../models/cart.dart';
 
 class CartItemWidget extends StatelessWidget {
 
-  final String id;
-  final int productId;
+  final String productId;
+  final int keyProductId;
   final String name;
   final int quantity;
   final double unitPrice;
 
-  CartItemWidget(this.id, this.productId, this.unitPrice, this.quantity, this.name);
+  CartItemWidget(this.productId, this.keyProductId, this.unitPrice, this.quantity, this.name);
 
   @override
   Widget build(BuildContext context) {
     return Dismissible(
-      key: ValueKey(id),
+      key: ValueKey(productId),
       direction: DismissDirection.endToStart,
-      onDismissed: (direction) { Provider.of<Cart>(context, listen: false).removeItem(productId); },
+      onDismissed: (direction) { Provider.of<Cart>(context, listen: false).removeItem(keyProductId); },
       background: Container(
         color: Theme.of(context).errorColor,
         margin: EdgeInsets.symmetric(horizontal: 15, vertical: 4),
