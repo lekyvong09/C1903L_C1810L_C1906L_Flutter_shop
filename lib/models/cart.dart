@@ -27,6 +27,11 @@ class Cart with ChangeNotifier {
     notifyListeners();
   }
 
+  void removeItem(int productId) {
+    _items.remove(productId);
+    notifyListeners();
+  }
+
   int get itemCount {
     return _items.length;
   }
