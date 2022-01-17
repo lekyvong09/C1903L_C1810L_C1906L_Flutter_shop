@@ -5,7 +5,7 @@ import '../models/cart.dart';
 
 class CartItemWidget extends StatelessWidget {
 
-  final String productId;
+  final int productId;
   final int keyProductId;
   final String name;
   final int quantity;

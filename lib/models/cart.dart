@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class CartItem {
-  String productId;
+  int productId;
   String name;
   int quantity;
   double unitPrice;
@@ -22,7 +22,7 @@ class Cart with ChangeNotifier {
       _items.update(productId, (existingCartItem) => CartItem(productId: existingCartItem.productId,
           name: existingCartItem.name, quantity: existingCartItem.quantity + 1, unitPrice: existingCartItem.unitPrice));
     } else {
-      _items.putIfAbsent(productId, () => CartItem(productId: DateTime.now().toString(), name: name, quantity: 1, unitPrice: unitPrice));
+      _items.putIfAbsent(productId, () => CartItem(productId: productId, name: name, quantity: 1, unitPrice: unitPrice));
     }
     notifyListeners();
   }
