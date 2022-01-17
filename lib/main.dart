@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:my_second_app/models/cart.dart';
-import 'package:my_second_app/screens/cart_screen.dart';
+import './models/cart.dart';
+import './screens/cart_screen.dart';
 import 'package:provider/provider.dart';
 
 import './providers/products_provider.dart';
 import './screens/product_detail_screen.dart';
 import './screens/products_overview_screen.dart';
+import './models/order.dart';
 
 void main() => runApp(MyApp());
 
@@ -17,6 +18,7 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (BuildContext context) => ProductsProvider(),),
         ChangeNotifierProvider(create: (BuildContext context) => Cart(),),
+        ChangeNotifierProvider(create: (BuildContext context) => Orders(),),
       ],
       child: MaterialApp(
         title: 'My Shop',
