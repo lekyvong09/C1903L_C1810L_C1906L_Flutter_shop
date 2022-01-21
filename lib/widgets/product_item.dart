@@ -31,7 +31,19 @@ class ProductItem extends StatelessWidget {
             backgroundColor: Colors.black54,
             leading: Consumer<Product>(builder: (ctx, product, child) =>
                 IconButton(icon: Icon(product.isFavorite ? Icons.favorite : Icons.favorite_border), color: Theme.of(context).accentColor, onPressed: () => product.toggleFavoriteStatus(),),),
-            trailing: IconButton(icon: Icon(Icons.shopping_cart), color: Theme.of(context).accentColor, onPressed: () => cart.addItem(product.id, product.unitPrice, product.name),),
+            trailing: IconButton(
+              icon: Icon(Icons.shopping_cart),
+              color: Theme.of(context).accentColor,
+              onPressed: () {
+                cart.addItem(product.id, product.unitPrice, product.name);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Added item to cart!'),
+                    duration: Duration(seconds: 2),
+                  ),
+                );
+              },
+            ),
           ),
         ),
       ),
