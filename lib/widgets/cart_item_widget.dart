@@ -31,7 +31,7 @@ class CartItemWidget extends StatelessWidget {
         child: Padding(
           padding: EdgeInsets.all(8.0),
           child: ListTile(
-            leading: CircleAvatar(child: Padding(padding: EdgeInsets.all(1), child: FittedBox(child: Text('\$$unitPrice',),),),),
+            leading: CircleAvatar(radius: 30, child: Padding(padding: EdgeInsets.all(1), child: FittedBox(child: Text('\$$unitPrice',),),),),
             title: Text(name),
             subtitle: Text('Total: \$${unitPrice * quantity}'),
             trailing: Text('$quantity x'),
