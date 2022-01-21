@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import '../models/order.dart';
 
 class OrderItemWidget extends StatelessWidget {
@@ -9,11 +10,13 @@ class OrderItemWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(children: <Widget>[
+    return Card(margin: EdgeInsets.all(10), child: Column(children: <Widget>[
       ListTile(
         title: Text('${order.totalPrice}'),
+        subtitle: Text(DateFormat('dd/MM/yyyy HH:mm').format(order.dateTime)),
+        trailing: IconButton(icon: Icon(Icons.expand_more), onPressed: () {  },),
       ),
-    ],);
+    ],),);
   }
 
 }
