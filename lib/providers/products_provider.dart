@@ -23,8 +23,12 @@ class ProductsProvider with ChangeNotifier {
   }
 
   // setter
-  void addProduct() {
-    // _items.add(value);
+  void addProduct(Product product) {
+    Product productWithMaxId = _items.reduce((result, element) => result.id > element.id ? result : element);
+    Product newProduct = Product(name: product.name, description: product.description, unitPrice: product.unitPrice, imageUrl: product.imageUrl,
+        id: productWithMaxId.id + 1);
+
+    _items.add(newProduct);
     notifyListeners();
   }
 
