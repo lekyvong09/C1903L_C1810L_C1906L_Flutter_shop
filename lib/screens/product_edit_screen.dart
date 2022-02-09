@@ -50,12 +50,26 @@ class _ProductEditScreen extends State<ProductEditScreen> {
 
   @override
   Widget build(BuildContext context) {
+
+    int productId = ModalRoute.of(context)!.settings.arguments as int;
+
+    _editedProduct = Provider.of<ProductsProvider>(context, listen: false).findById(productId);
+    var _initValues = {
+      'name': _editedProduct.name,
+      'description': _editedProduct.description,
+      'unitPrice': _editedProduct.unitPrice.toString(),
+    };
+    print(_editedProduct.name);
+    print(_editedProduct.description);
+    print(_editedProduct.unitPrice.toString());
+
     return Scaffold(
       appBar: AppBar(title: Text('Edit Product'), actions: <Widget>[IconButton(onPressed: _saveForm, icon: Icon(Icons.save))],),
       body: Padding(
         padding: EdgeInsets.all(16),
         child: Form(key: _form, child: SingleChildScrollView(child: Column(children: [
           TextFormField(decoration: InputDecoration(labelText: 'Title'), textInputAction: TextInputAction.next,
+            initialValue: _initValues['name'],
             onFieldSubmitted: (ctx) => FocusScope.of(context).requestFocus(_priceFocusNode),
             onSaved: (value) => _editedProduct = Product(name: value!, description: _editedProduct.description, unitPrice: _editedProduct.unitPrice, imageUrl: _editedProduct.imageUrl, id: 0),
             validator: (value) {
@@ -64,6 +78,7 @@ class _ProductEditScreen extends State<ProductEditScreen> {
             },
           ),
           TextFormField(decoration: InputDecoration(labelText: 'Price'), focusNode: _priceFocusNode, textInputAction: TextInputAction.next, keyboardType: TextInputType.numberWithOptions(signed: true, decimal: true),
+            initialValue: _initValues['unitPrice'],
             onFieldSubmitted: (ctx) => FocusScope.of(context).requestFocus(_descriptionFocusNode),
             onSaved: (value) => _editedProduct = Product(name: _editedProduct.name, description: _editedProduct.description, unitPrice: double.parse(value!), imageUrl: _editedProduct.imageUrl, id: 0),
             validator: (value) {
@@ -74,6 +89,7 @@ class _ProductEditScreen extends State<ProductEditScreen> {
             },
           ),
           TextFormField(decoration: InputDecoration(labelText: 'Description'), focusNode: _descriptionFocusNode, maxLines: 3, textInputAction: TextInputAction.next, keyboardType: TextInputType.multiline,
+            initialValue: _initValues['description'],
             onFieldSubmitted: (ctx) => FocusScope.of(context).requestFocus(_imageFocusNode),
             onSaved: (value) => _editedProduct = Product(name: _editedProduct.name, description: value!, unitPrice: _editedProduct.unitPrice, imageUrl: _editedProduct.imageUrl, id: 0),
             validator: (value) { if(value!.isEmpty) { return 'Please provide a value'; } return null; },
