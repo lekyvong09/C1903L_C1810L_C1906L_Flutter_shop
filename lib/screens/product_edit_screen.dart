@@ -13,6 +13,17 @@ class _ProductEditScreen extends State<ProductEditScreen> {
   final _imageFocusNode = FocusNode();
   final _imageUrlController = TextEditingController();
 
+  void initState() {
+    _imageFocusNode.addListener(_updateImageUrl);
+    super.initState();
+  }
+
+  _updateImageUrl() {
+    if (!_imageFocusNode.hasFocus) {
+      setState(() { });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -27,8 +38,13 @@ class _ProductEditScreen extends State<ProductEditScreen> {
           TextFormField(decoration: InputDecoration(labelText: 'Description'), focusNode: _descriptionFocusNode, maxLines: 3, textInputAction: TextInputAction.next, keyboardType: TextInputType.multiline,
             onFieldSubmitted: (ctx) => FocusScope.of(context).requestFocus(_imageFocusNode),),
           Row(children: [
-            Container(child: Image.network(_imageUrlController.text)),
-            TextFormField(decoration: InputDecoration(labelText: 'Image URL'), focusNode: _imageFocusNode, controller: _imageUrlController, textInputAction: TextInputAction.done, keyboardType: TextInputType.url,),
+            Container(width: 100, height: 100, margin: EdgeInsets.only(top: 10, right: 10),
+                child: _imageUrlController.text.isEmpty ? Text('Enter an URL') : FittedBox(child: Image.network(_imageUrlController.text), fit: BoxFit.cover,)
+            ),
+            Expanded(child: TextFormField(decoration: InputDecoration(labelText: 'Image URL'), focusNode: _imageFocusNode,
+              controller: _imageUrlController, textInputAction: TextInputAction.done, keyboardType: TextInputType.url,
+              onEditingComplete: () => setState(() { }),
+            ),),
           ],), 
         ],),),),
       ),
