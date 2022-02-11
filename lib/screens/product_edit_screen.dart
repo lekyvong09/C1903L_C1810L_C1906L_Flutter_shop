@@ -17,6 +17,8 @@ class _ProductEditScreen extends State<ProductEditScreen> {
   final _imageUrlController = TextEditingController();
   final _form = GlobalKey<FormState>();
   Product _editedProduct = Product(id: 0, name: '', description: '', unitPrice: 0, imageUrl: '');
+  bool _isInit = true;
+
   var _initValues = {
     'name': '',
     'description': '',
@@ -26,6 +28,26 @@ class _ProductEditScreen extends State<ProductEditScreen> {
   void initState() {
     _imageFocusNode.addListener(_updateImageUrl);
     super.initState();
+  }
+
+  void didChangeDependencies() {
+    if (_isInit) {
+      if (ModalRoute.of(context)!.settings.arguments != null) {
+        var productId = ModalRoute.of(context)!.settings.arguments as int;
+        if (productId != 0) {
+          _editedProduct = Provider.of<ProductsProvider>(context, listen: false).findById(productId);
+          _imageUrlController.text = _editedProduct.imageUrl;
+          _initValues = {
+            'name': _editedProduct.name,
+            'description': _editedProduct.description,
+            'unitPrice': _editedProduct.unitPrice.toString(),
+            'imageUrl': '',
+          };
+        }
+      }
+    }
+    _isInit = false;
+    super.didChangeDependencies();
   }
 
   _updateImageUrl() {
@@ -45,11 +67,6 @@ class _ProductEditScreen extends State<ProductEditScreen> {
       return;
     }
     _form.currentState!.save();
-    print(_editedProduct.name);
-    print(_editedProduct.description);
-    print(_editedProduct.imageUrl);
-    print(_editedProduct.unitPrice);
-    print(_editedProduct.id);
     if (_editedProduct.id !=0) {
       Provider.of<ProductsProvider>(context, listen: false).updateProduct(_editedProduct.id, _editedProduct);
     } else {
@@ -61,24 +78,6 @@ class _ProductEditScreen extends State<ProductEditScreen> {
 
   @override
   Widget build(BuildContext context) {
-
-    if (ModalRoute.of(context)!.settings.arguments != null) {
-      var productId = ModalRoute.of(context)!.settings.arguments as int;
-      if (productId != 0) {
-        _editedProduct = Provider.of<ProductsProvider>(context, listen: false).findById(productId);
-        _imageUrlController.text = _editedProduct.imageUrl;
-        _initValues = {
-          'name': _editedProduct.name,
-          'description': _editedProduct.description,
-          'unitPrice': _editedProduct.unitPrice.toString(),
-          'imageUrl': '',
-        };
-        print(_editedProduct.id);
-        print(_editedProduct.name);
-        print(_editedProduct.description);
-        print(_editedProduct.unitPrice.toString());
-      }
-    }
 
     return Scaffold(
       appBar: AppBar(title: Text('Edit Product'), actions: <Widget>[IconButton(onPressed: _saveForm, icon: Icon(Icons.save))],),
@@ -131,6 +130,15 @@ class _ProductEditScreen extends State<ProductEditScreen> {
         ],),),),
       ),
     );
+  }
+
+  void dispose() {
+    _imageFocusNode.removeListener(_updateImageUrl);
+    _priceFocusNode.dispose();
+    _descriptionFocusNode.dispose();
+    _imageUrlController.dispose();
+    _imageFocusNode.dispose();
+    super.dispose();
   }
 
 }
