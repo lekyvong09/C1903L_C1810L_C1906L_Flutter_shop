@@ -25,7 +25,7 @@ class ProductsProvider with ChangeNotifier {
   }
 
   // setter
-  void addProduct(Product product) {
+  Future<void> addProduct(Product product) {
     
     Uri url = Uri.parse('http://localhost:8080/api/product');
 
@@ -34,7 +34,7 @@ class ProductsProvider with ChangeNotifier {
       'Accept': 'application/json',
     };
 
-    httpClient.post(url, headers: headers, body: json.encode({
+    return httpClient.post(url, headers: headers, body: json.encode({
       'name': product.name,
       'description': product.description,
       'unitPrice': product.unitPrice,
