@@ -11,6 +11,15 @@ class Product with ChangeNotifier{
   Product({required this.id, required this.name, required this.description, required this.unitPrice,
     required this.imageUrl, this.isFavorite = false});
 
+  Map toJson() => {
+    'id': id,
+    'name': name,
+    'description': description,
+    'unitPrice': unitPrice,
+    'imageUrl': imageUrl,
+    'isFavorite': isFavorite,
+  };
+
   void toggleFavoriteStatus() {
     isFavorite = !isFavorite;
     notifyListeners();

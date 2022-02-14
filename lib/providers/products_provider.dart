@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/product.dart';
+import 'package:http/http.dart' as httpClient;
+import 'dart:convert';
 
 class ProductsProvider with ChangeNotifier {
   List<Product> _items = [
@@ -24,12 +26,41 @@ class ProductsProvider with ChangeNotifier {
 
   // setter
   void addProduct(Product product) {
-    Product productWithMaxId = _items.reduce((result, element) => result.id > element.id ? result : element);
-    Product newProduct = Product(name: product.name, description: product.description, unitPrice: product.unitPrice, imageUrl: product.imageUrl,
-        id: productWithMaxId.id + 1);
+    
+    Uri url = Uri.parse('http://localhost:8080/api/product');
 
-    _items.add(newProduct);
-    notifyListeners();
+    Map<String, String> headers = {
+      'Content-type': 'application/json',
+      'Accept': 'application/json',
+    };
+
+    httpClient.post(url, headers: headers, body: json.encode({
+      'name': product.name,
+      'description': product.description,
+      'unitPrice': product.unitPrice,
+      'imageUrl': product.imageUrl,
+      'isFavorite': product.isFavorite,
+      'unitsInStock': 100,
+      'active': true,
+      'category': {"id": 5, "categoryName": "MobileProduct"}
+    })).then((response) {
+      print(json.decode(response.body));
+      final res = json.decode(response.body);
+      Product newProduct = Product( name: res['name'],
+                                    description: res['description'],
+                                    unitPrice: res['unitPrice'],
+                                    imageUrl: res['imageUrl'],
+                                    id: res['id']
+      );
+      _items.add(newProduct);
+      print(json.encode(newProduct));
+      notifyListeners();
+    });
+
+
+
+
+
   }
 
   void updateProduct(int id, Product newProduct) {
