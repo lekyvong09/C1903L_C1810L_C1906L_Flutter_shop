@@ -55,6 +55,9 @@ class ProductsProvider with ChangeNotifier {
       _items.add(newProduct);
       print(json.encode(newProduct));
       notifyListeners();
+    }).catchError((error) {
+      print(error);
+      throw error;
     });
 
 
