@@ -25,7 +25,7 @@ class ProductsProvider with ChangeNotifier {
   }
 
   // setter
-  Future<void> addProduct(Product product) {
+  Future<void> addProduct(Product product) async {
     
     Uri url = Uri.parse('http://localhost:8080/api/product');
 
@@ -34,31 +34,35 @@ class ProductsProvider with ChangeNotifier {
       'Accept': 'application/json',
     };
 
-    return httpClient.post(url, headers: headers, body: json.encode({
-      'name': product.name,
-      'description': product.description,
-      'unitPrice': product.unitPrice,
-      'imageUrl': product.imageUrl,
-      'isFavorite': product.isFavorite,
-      'unitsInStock': 100,
-      'active': true,
-      'category': {"id": 5, "categoryName": "MobileProduct"}
-    })).then((response) {
+    try {
+      final response = await httpClient.post(
+          url, headers: headers, body: json.encode({
+        'name': product.name,
+        'description': product.description,
+        'unitPrice': product.unitPrice,
+        'imageUrl': product.imageUrl,
+        'isFavorite': product.isFavorite,
+        'unitsInStock': 100,
+        'active': true,
+        'category': {"id": 5, "categoryName": "MobileProduct"}
+      }));
+
       print(json.decode(response.body));
       final res = json.decode(response.body);
-      Product newProduct = Product( name: res['name'],
-                                    description: res['description'],
-                                    unitPrice: res['unitPrice'],
-                                    imageUrl: res['imageUrl'],
-                                    id: res['id']
+      Product newProduct = Product(name: res['name'],
+          description: res['description'],
+          unitPrice: res['unitPrice'],
+          imageUrl: res['imageUrl'],
+          id: res['id']
       );
       _items.add(newProduct);
       print(json.encode(newProduct));
       notifyListeners();
-    }).catchError((error) {
+    } catch (error) {
       print(error);
       throw error;
-    });
+    }
+
 
 
 
