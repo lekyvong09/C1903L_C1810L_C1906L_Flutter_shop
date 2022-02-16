@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_second_app/providers/products_provider.dart';
 import 'package:provider/provider.dart';
 
 import '../widgets/navbar_drawer.dart';
@@ -21,6 +22,18 @@ class ProductsOverviewScreen extends StatefulWidget {
 class _ProductsOverviewScreen extends State<ProductsOverviewScreen> {
 
   bool _showFavoritesOnly = false;
+  bool _isLoading = false;
+  bool _isInit = true;
+
+  @override
+  void didChangeDependencies() {
+    if (_isInit) {
+      setState(() { _isLoading = true;});
+      Provider.of<ProductsProvider>(context).fetchAndSetProducts().then((value) => setState(() { _isLoading = false; }));
+    }
+    _isInit = false;
+    super.didChangeDependencies();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +65,7 @@ class _ProductsOverviewScreen extends State<ProductsOverviewScreen> {
         ],
       ),
       drawer: NavbarDrawer(),
-      body: ProductsGrid(_showFavoritesOnly),
+      body: _isLoading ? Center(child: CircularProgressIndicator(),) : ProductsGrid(_showFavoritesOnly),
     );
   }
 }

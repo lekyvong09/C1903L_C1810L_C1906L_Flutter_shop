@@ -47,7 +47,7 @@ class ProductsProvider with ChangeNotifier {
         'category': {"id": 5, "categoryName": "MobileProduct"}
       }));
 
-      print(json.decode(response.body));
+      // print(json.decode(response.body));
       final res = json.decode(response.body);
       Product newProduct = Product(name: res['name'],
           description: res['description'],
@@ -56,17 +56,12 @@ class ProductsProvider with ChangeNotifier {
           id: res['id']
       );
       _items.add(newProduct);
-      print(json.encode(newProduct));
+      // print(json.encode(newProduct));
       notifyListeners();
     } catch (error) {
       print(error);
       throw error;
     }
-
-
-
-
-
 
   }
 
@@ -85,4 +80,29 @@ class ProductsProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> fetchAndSetProducts() async {
+    Uri url = Uri.parse('http://localhost:8080/api/products/search/findByCategoryId?id=5');
+    try {
+      final response = await httpClient.get(url);
+      print(json.decode(response.body)['_embedded']['products']);
+      final extractedData = json.decode(response.body)['_embedded']['products'] as List<dynamic>;
+      final List<Product> loadProducts = [];
+      extractedData.forEach((element) {
+        // print(element);
+        loadProducts.add(Product(
+          id: element['id'],
+          name: element['name'],
+          description: element['description'],
+          unitPrice: element['unitPrice'],
+          imageUrl: element['imageUrl'],
+          isFavorite: element['favorite'],
+        ));
+      });
+      _items = loadProducts;
+      notifyListeners();
+
+    } catch (error) {
+      throw error;
+    }
+  }
 }
