@@ -65,11 +65,33 @@ class ProductsProvider with ChangeNotifier {
 
   }
 
-  void updateProduct(int id, Product newProduct) {
+  Future<void> updateProduct(int id, Product newProduct) async {
     int prodIndex = _items.indexWhere((element) => element.id == id);
     if (prodIndex >= 0) {
-      _items[prodIndex] = newProduct;
-      notifyListeners();
+      Uri url = Uri.parse('http://localhost:8080/api/products/$id');
+      Map<String, String> headers = {
+        'Content-type': 'application/json',
+        'Accept': 'application/json',
+      };
+
+      try {
+        await httpClient.put(url, headers: headers, body: json.encode({
+          'name': newProduct.name,
+          'description': newProduct.description,
+          'unitPrice': newProduct.unitPrice,
+          'imageUrl': newProduct.imageUrl,
+          'favorite': newProduct.isFavorite,
+          'unitsInStock': 100,
+          'active': true,
+          'category': {"id": 5, "categoryName": "MobileProduct"}
+        }));
+
+        _items[prodIndex] = newProduct;
+        notifyListeners();
+      } catch (error) {
+        throw error;
+      }
+
     } else {
       print("problem with updating product");
     }

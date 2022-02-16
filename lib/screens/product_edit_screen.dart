@@ -70,9 +70,18 @@ class _ProductEditScreen extends State<ProductEditScreen> {
     setState(() {_isLoading = true;});
     _form.currentState!.save();
     if (_editedProduct.id !=0) {
-      Provider.of<ProductsProvider>(context, listen: false).updateProduct(_editedProduct.id, _editedProduct);
-      Navigator.of(context).pop();
-      setState(() {_isLoading = false;});
+
+      try {
+          await Provider.of<ProductsProvider>(context, listen: false).updateProduct(_editedProduct.id, _editedProduct);
+          Navigator.of(context).pop();
+          setState(() {_isLoading = false;});
+      } catch (error) {
+          await showDialog(context: context, builder: (ctx) => AlertDialog(
+              title: Text('Error'), content: Text(error.toString(),),
+              actions: <Widget>[FlatButton(onPressed: () => {Navigator.of(ctx).pop(), setState(() {_isLoading = false;}),}, child: Text('Okay'))]
+          ));
+      }
+
     } else {
       try {
           await Provider.of<ProductsProvider>(context, listen: false).addProduct(_editedProduct);
