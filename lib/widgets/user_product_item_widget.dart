@@ -23,7 +23,16 @@ class UserProductItemWidget extends StatelessWidget {
             onPressed: () => Navigator.of(context).pushNamed(ProductEditScreen.routeName, arguments: id),
           ),
           IconButton(icon: Icon(Icons.delete), color: Theme.of(context).errorColor, 
-            onPressed: () => Provider.of<ProductsProvider>(context, listen: false).deleteProduct(id),
+            onPressed: () async {
+              try {
+                String message = await Provider.of<ProductsProvider>(context, listen: false).deleteProduct(id);
+                if (message != '') {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message),),);
+                }
+              } catch (error) {
+                throw Exception('Deleting failed');
+              }
+            }
           ),
       ],),) ,
     );

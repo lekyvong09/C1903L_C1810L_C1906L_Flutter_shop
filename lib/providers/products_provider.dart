@@ -97,9 +97,24 @@ class ProductsProvider with ChangeNotifier {
     }
   }
 
-  void deleteProduct(int id) {
-    _items.removeWhere((element) => element.id == id);
-    notifyListeners();
+  Future<String> deleteProduct(int id) async {
+    Uri url = Uri.parse('http://localhost:8080/api/products/$id');
+
+    String message = '';
+    try {
+      final response = await httpClient.delete(url);
+      if (response.statusCode == 204) {
+        _items.removeWhere((element) => element.id == id);
+        notifyListeners();
+      } else {
+        // print(json.decode(response.body));
+        message = json.decode(response.body)['message'];
+      }
+      return message;
+    } catch (error) {
+      throw error;
+    }
+
   }
 
   Future<void> fetchAndSetProducts() async {
