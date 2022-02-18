@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-
+import 'package:http/http.dart' as httpClient;
 import 'cart.dart';
 import 'dart:convert';
+
 class Order {
   String orderTrackingNumber;
   double totalPrice;
@@ -26,10 +27,43 @@ class Orders with ChangeNotifier {
     return [..._orders];
   }
 
-  void addOrder(List<CartItem> cartProducts, double total) {
-    _orders.insert(0, Order(orderTrackingNumber: DateTime.now().millisecondsSinceEpoch.toString(),
-        totalPrice: total, dateTime: DateTime.now(), products: cartProducts));
-    print(json.encode(_orders));
-    notifyListeners();
+  Future<void> addOrder(List<CartItem> cartProducts, double total) {
+    Uri url = Uri.parse('http://localhost:8080/api/checkout/purchase');
+    Map<String, String> headers = {
+      'Content-type': 'application/json',
+      'Accept': 'application/json',
+    };
+
+    return httpClient.post(url, headers: headers, body: json.encode({
+      'user': {'email': 'ray@email.com'},
+      "shippingAddress": {
+        "street": "21231 Le Duan, DISTRICT 1", "city": "HO CHI MINH", "state": "Alberta", "country": "Canada", "zipCode": "70000"
+      },
+      "billingAddress": {
+        "street": "21231 Le Duan, DISTRICT 1", "city": "HO CHI MINH", "state": "Alberta", "country": "Canada", "zipCode": "70000"
+      },
+      "order": {"totalQuantity": 0, "totalPrice": total },
+      'orderItems': cartProducts.map((e) => {
+        'imageUrl': e.imageUrl,
+        'quantity': e.quantity,
+        'unitPrice': e.unitPrice,
+        'productId': e.productId,
+      }).toList(),
+    })).then((result) {
+      String orderTrackingNumber = DateTime.now().millisecondsSinceEpoch.toString();
+      DateTime dateCreated = DateTime.now();
+
+      try {
+        orderTrackingNumber = json.decode(result.body)['orderTrackingNumber'];
+        dateCreated = DateTime.parse(json.decode(result.body)['dateCreated']).toLocal();
+      } on FormatException catch (e) {
+        print('Message return is not a valid JSON format');
+      }
+      _orders.insert(0, Order(orderTrackingNumber: orderTrackingNumber, totalPrice: total, dateTime: dateCreated, products: cartProducts));
+      // print(json.encode(_orders));
+      notifyListeners();
+
+    }).catchError((error) => throw error);
+
   }
 }
