@@ -27,6 +27,37 @@ class Orders with ChangeNotifier {
     return [..._orders];
   }
 
+  Future<void> fetchAndSetOrders() async {
+    Uri url = Uri.parse('http://localhost:8080/api/orders');
+    final response = await httpClient.get(url);
+    // print(json.decode(response.body));
+    final extractedDate = json.decode(response.body)['_embedded']['orders'] as List<dynamic>;
+    if (extractedDate.length == 0){
+      return;
+    }
+    final List<Order> loadedOrders = [];
+    extractedDate.forEach((element) {
+      List<CartItem> listCartItems = (element['orderItems'] as List<dynamic>).map((element) => CartItem(
+          productId: element['productId'],
+          name: element['productId'].toString(),
+          quantity: element['quantity'],
+          unitPrice: element['unitPrice'],
+          imageUrl: element['imageUrl'],)
+      ).toList();
+
+      loadedOrders.add(Order(
+        orderTrackingNumber: element['orderTrackingNumber'],
+        totalPrice: element['totalPrice'],
+        dateTime: DateTime.parse(element['dateCreated']).toLocal(),
+        products: listCartItems,
+      ));
+    });
+
+    _orders = loadedOrders.reversed.toList();
+    notifyListeners();
+
+  }
+
   Future<void> addOrder(List<CartItem> cartProducts, double total) {
     Uri url = Uri.parse('http://localhost:8080/api/checkout/purchase');
     Map<String, String> headers = {
@@ -56,7 +87,7 @@ class Orders with ChangeNotifier {
       try {
         orderTrackingNumber = json.decode(result.body)['orderTrackingNumber'];
         dateCreated = DateTime.parse(json.decode(result.body)['dateCreated']).toLocal();
-      } on FormatException catch (e) {
+      } on FormatException catch (_) {
         print('Message return is not a valid JSON format');
       }
       _orders.insert(0, Order(orderTrackingNumber: orderTrackingNumber, totalPrice: total, dateTime: dateCreated, products: cartProducts));
